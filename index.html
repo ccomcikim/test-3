@@ -1,804 +1,477 @@
 import React, { useState } from 'react';
 import { 
-  BookOpen, Calendar, AlertTriangle, FileText, MessageSquare, Shield, 
-  Clock, MapPin, User, Download, CheckCircle, Flame, Activity, 
-  CloudRain, Wind, HeartPulse, ChevronDown, ChevronUp, Plus, ThumbsUp,
-  Search, ExternalLink, Bell, PieChart, Info, HelpCircle
+  Sparkles, Star, Heart, Sun, Bell, BookOpen, Calendar, 
+  Check, Utensils, MessageSquare, Send, Award, 
+  Gift, Trophy, Megaphone, Smile, User, Clock,
+  SmilePlus, Volume2, Cloud, Music, Palette, Zap
 } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [activeWeek, setActiveWeek] = useState(1);
-  const [selectedDisaster, setSelectedDisaster] = useState('earthquake');
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  // Q&A State
-  const [questions, setQuestions] = useState([
-    {
-      id: 1,
-      title: '3주차 사회재난 케이스 스터디 작성 가이드라인 문의',
-      author: '김민준 (행정학과 21학번)',
-      date: '2026.09.28',
-      likes: 5,
-      replies: 2,
-      category: '과제문의',
-      content: '보고서 작성 시 제시된 서식 외에 추가 그래프나 통계자료 첨부 시 분량 제한(A4 3매)에 포함되는지 궁금합니다.',
-      answered: true,
-      answer: '교수자 답변: 참고자료 및 그래프는 부록으로 첨부할 수 있으며, 이 경우 분량 제한에 포함되지 않습니다.'
-    },
-    {
-      id: 2,
-      title: '지진해일(쓰나미) 예경보 시스템의 물리적 한계점 질문',
-      author: '이서연 (도시공학과 23학번)',
-      date: '2026.09.25',
-      likes: 8,
-      replies: 1,
-      category: '강의질문',
-      content: '근해에서 발생하는 지진의 경우 골든타임 확보를 위해 P파와 S파의 차이 외에 어떤 기술적 보완이 이루어지고 있나요?',
-      answered: true,
-      answer: '교수자 답변: 해저 지진계 네트워크(DONET 등)와 AI 기반 해일 예측 모델을 연동하여 보정하고 있습니다. 5주차 강의에서 자세히 다룰 예정입니다.'
-    },
-    {
-      id: 3,
-      title: '중간고사 범위에 7주차 특강 내용도 포함되나요?',
-      author: '박준혁 (소방방재학과 22학번)',
-      date: '2026.09.20',
-      likes: 12,
-      replies: 1,
-      category: '시험문의',
-      content: '초청강사님으로 오시는 재난안전본부 전문가 특강 내용도 시험 문제로 출제되는지 문의드립니다.',
-      answered: false
-    }
+  const [activeTab, setActiveTab] = useState('timetable');
+  const [stickerCount, setStickerCount] = useState(15);
+  const [collectedStickers, setCollectedStickers] = useState([
+    { id: 1, emoji: '🐻', name: '착한 곰돌이', color: 'bg-amber-100 border-amber-300 text-amber-700' },
+    { id: 2, type: 'star', emoji: '⭐', name: '발표 최고', color: 'bg-yellow-100 border-yellow-300 text-yellow-700' },
+    { id: 3, type: 'heart', emoji: '🎀', name: '친절 리본', color: 'bg-pink-100 border-pink-300 text-pink-700' },
+    { id: 4, type: 'rabbit', emoji: '🐰', name: '토끼 질서왕', color: 'bg-purple-100 border-purple-300 text-purple-700' },
   ]);
-  
-  const [newQuestionTitle, setNewQuestionTitle] = useState('');
-  const [newQuestionContent, setNewQuestionContent] = useState('');
-  const [newQuestionCategory, setNewQuestionCategory] = useState('강의질문');
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Handle Question Submit
-  const handleAddQuestion = (e) => {
-    e.preventDefault();
-    if (!newQuestionTitle.trim() || !newQuestionContent.trim()) return;
+  const [popToast, setPopToast] = useState(null);
 
-    const newQ = {
+  // Homework & Supply Checklist
+  const [checklist, setChecklist] = useState([
+    { id: 1, text: '🎨 미술 준비물: 수채화 물감 & 붓 챙기기', done: true, tag: '미술' },
+    { id: 2, text: '✏️ 수학 익힘책 42~45쪽 예쁘게 풀기', done: false, tag: '수학' },
+    { id: 3, text: '📝 알림장에 부모님 사랑의 확인 도장 받기', done: false, tag: '숙제' },
+    { id: 4, text: '👟 내일 신나는 체육시간! 운동화 신기', done: true, tag: '체육' },
+  ]);
+
+  // Class Mailbox Messages
+  const [mailbox, setMailbox] = useState([
+    { id: 1, sender: '선생님 👩‍🏫', msg: '오늘 우리 반 친구들 모두 차례차례 줄도 잘 서고 발표도 너무 멋졌어요! 칭찬해요 💖', time: '오전 11:30', badge: '선생님 사랑' },
+    { id: 2, sender: '민우 👦', msg: '내일 쉬는 시간에 나랑 공놀이 할 사람 모여라~! ⚽', time: '오후 01:40', badge: '우정' },
+    { id: 3, sender: '서연 👧', msg: '선생님! 내일 미술시간에 크레파스도 가져가야 하나요? 🖍️', time: '오후 03:10', badge: '질문' }
+  ]);
+
+  const [inputMsg, setInputMsg] = useState('');
+  const [mascotFeeling, setMascotFeeling] = useState('기분 최고! ✨');
+
+  const toggleCheck = (id) => {
+    setChecklist(checklist.map(c => c.id === id ? { ...c, done: !c.done } : c));
+  };
+
+  const handleAddSticker = (emoji, name) => {
+    setStickerCount(prev => prev + 1);
+    setPopToast(`🎉 '${name}' 스티커를 획득했어요! ⭐`);
+    
+    // Add to collection
+    const newSticker = {
       id: Date.now(),
-      title: newQuestionTitle,
-      author: '나 (학생)',
-      date: '2026.10.30',
-      likes: 0,
-      replies: 0,
-      category: newQuestionCategory,
-      content: newQuestionContent,
-      answered: false
+      emoji: emoji,
+      name: name,
+      color: 'bg-pink-100 border-pink-300 text-pink-700 animate-bounce'
     };
+    setCollectedStickers([newSticker, ...collectedStickers]);
 
-    setQuestions([newQ, ...questions]);
-    setNewQuestionTitle('');
-    setNewQuestionContent('');
-    setIsModalOpen(false);
+    setTimeout(() => setPopToast(null), 2500);
   };
 
-  const handleLike = (id) => {
-    setQuestions(questions.map(q => q.id === id ? { ...q, likes: q.likes + 1 } : q));
+  const handleSendMail = (e) => {
+    e.preventDefault();
+    if (!inputMsg.trim()) return;
+    const newMail = {
+      id: Date.now(),
+      sender: '나 (기쁨이) 🐥',
+      msg: inputMsg,
+      time: '방금 전',
+      badge: '내가 보낸 편지'
+    };
+    setMailbox([newMail, ...mailbox]);
+    setInputMsg('');
+    setPopToast('💌 마음 전하기 성공! 선생님께 전달되었어요.');
+    setTimeout(() => setPopToast(null), 2500);
   };
-
-  // Syllabus Data
-  const syllabusData = [
-    { week: 1, title: '재난의 정의와 현대 사회의 위험 구조', desc: '재난의 개념적 정의, 자연재난과 사회재난의 구분, 현대위험사회의 특성 분석', badge: '기본개념' },
-    { week: 2, title: '국가 재난관리체계 및 법적 프레임워크', desc: '재난 및 안전관리 기본법 구조, 국가위기관리센터 및 중앙재난안전대책본부 역할', badge: '법·제도' },
-    { week: 3, title: '자연재난 I: 기후변화와 풍수해/태풍 대응 전략', desc: '기후변화에 따른 극한 기상 현상 분석 및 지자체 단위 풍수해 예방/대응체계', badge: '자연재난' },
-    { week: 4, title: '자연재난 II: 지진, 화산 및 지진해일 물리적 메커니즘', desc: '한반도 지진 역사 및 단층 구조, 지진 조기경보 시스템 및 내진설계 규정', badge: '자연재난' },
-    { week: 5, title: '사회재난 I: 화재·폭발 및 대형 인적 재난 관리', desc: '다중이용시설 화재 성상, 연기 제어 시스템, 건축물 방재계획 및 대피 모델링', badge: '사회재난' },
-    { week: 6, title: '사회재난 II: 감염병 팬데믹과 국가 보건위기', desc: 'K-방역 사례 연구, 신종 감염병 거버넌스, 백신 공급망 및 의료자원 배분 전략', badge: '사회재난' },
-    { week: 7, title: '현장 실무 전문가 초청 특강 (재난현장 지휘체계)', desc: '소방청/행안부 현장 지휘관과의 만남: ICS(Incident Command System) 실무', badge: '특강' },
-    { week: 8, title: '중간고사 (Midterm Examination)', desc: '1~7주차 강의 내용 객관식, 단답형 및 사례 분석 논술형 평가', badge: '평가' },
-    { week: 9, title: '위기관리 리더십 및 재난 커뮤니케이션', desc: '위기 시 국민 언론 소통, 언론 브리핑 전략, 가짜뉴스 대응 및 불안감 제어', badge: '위기관리' },
-    { week: 10, title: '핵심 기반시설 방호 및 인프라 복원력 (Resilience)', desc: '전력, 통신, 교통, 용수 등 국가핵심기반 지정 및 연속성계획(BCP) 구축', badge: '인프라' },
-    { week: 11, title: '재난 심리지원 및 지역사회 회복탄력성', desc: '재난 생존자 및 현장 대응인력의 PTSD, 지역사회 공동체 복원 프로세스', badge: '심리/회복' },
-    { week: 12, title: '첨단 ICT 기술 기반 재난안전 스마트 솔루션', desc: 'AI 드론 감시, Big Data 기반 예측, IoT 센서 및 GIS 재난지도 시스템 활용', badge: '신기술' },
-    { week: 13, title: '기업 지속가능성과 BCM (비즈니스 연속성 관리)', desc: 'ISO 22301 국제 표준, 기업의 ESG 경영과 재난 리스크 관리 통합', badge: '기업안전' },
-    { week: 14, title: '팀 프로젝트 발표: 지역사회 위험성 평가 보고서', desc: '조별로 선택한 실제 지역/시설 대상 Hazard Identification & Risk Assessment', badge: '팀발표' },
-    { week: 15, title: '기말고사 (Final Examination)', desc: '전 범위 대상 종합 이론 및 사례 판례 해석 평가', badge: '평가' }
-  ];
-
-  // Disaster Protocols
-  const disasterProtocols = {
-    earthquake: {
-      title: '지진 발생 시 행동요령',
-      icon: <Activity className="w-8 h-8 text-amber-500" />,
-      subtitle: 'Earthquake Safety Protocol',
-      bgClass: 'from-amber-500/10 to-orange-500/10 border-amber-500/30',
-      steps: [
-        { phase: '흔들릴 때', act: '탁자 아래로 들어가 몸을 보호하고 탁자 다리를 꼭 잡습니다.' },
-        { phase: '흔들림 멈춤', act: '전기와 가스를 차단하고 문을 열어 출구를 확보합니다.' },
-        { phase: '대피 시', act: '계단을 이용해 신속히 이동하며 엘리베이터는 절대 금지합니다.' },
-        { phase: '대피 장소', act: '가방 등으로 머리를 보호하며 운동장, 공원 등 넓은 공간으로 이동합니다.' }
-      ]
-    },
-    fire: {
-      title: '화재 및 연기 발생 시 행동요령',
-      icon: <Flame className="w-8 h-8 text-red-500" />,
-      subtitle: 'Fire Response Protocol',
-      bgClass: 'from-red-500/10 to-rose-500/10 border-red-500/30',
-      steps: [
-        { phase: '초기 전파', act: '질소/소화기를 활용하거나 즉시 "불이야!" 외치고 비상벨을 누릅니다.' },
-        { phase: '대피 자세', act: '젖은 수건으로 코와 입을 막고 자세를 낮춰 연기를 피하며 대피합니다.' },
-        { phase: '문 열기 전', act: '손잡이가 뜨거우면 반대편에 화재가 있는 것이므로 문을 열지 않습니다.' },
-        { phase: '갇혔을 때', act: '창문 밖으로 옷을 흔들거나 소리를 질러 구조 신호를 보냅니다.' }
-      ]
-    },
-    typhoon: {
-      title: '태풍 및 집중호우 대응 protocol',
-      icon: <CloudRain className="w-8 h-8 text-blue-500" />,
-      subtitle: 'Severe Weather Guide',
-      bgClass: 'from-blue-500/10 to-cyan-500/10 border-blue-500/30',
-      steps: [
-        { phase: '실내 위치', act: '창문 및 문을 꼭 닫고 창문 틀을 테이프/강화재로 고정합니다.' },
-        { phase: '외출 금지', act: '침수 우려 지역, 하천변, 산사태 위험지역 출입을 철저히 금지합니다.' },
-        { phase: '차량 운행', act: '바퀴의 2/3 이상 잠기기 전 신속히 안전한 고지대로 이동합니다.' },
-        { phase: '정보 확인', act: '기상청 비상특보 및 지자체 재난문자를 실시간 주시합니다.' }
-      ]
-    },
-    epidemic: {
-      title: '화학사고 & 감염병 긴급대응',
-      icon: <HeartPulse className="w-8 h-8 text-purple-500" />,
-      subtitle: 'Hazmat & Epidemic Safety',
-      bgClass: 'from-purple-500/10 to-indigo-500/10 border-purple-500/30',
-      steps: [
-        { phase: '화학 가스 유출', act: '바람을 등지고 고지대로 이동하며 실내 가스 밀폐를 조치합니다.' },
-        { phase: '피부 노출 시', act: '즉시 흐르는 깨끗한 물로 15분 이상 충분히 씻어냅니다.' },
-        { phase: '감염병 예방', act: '올바른 손 씻기(30초 이상)와 마스크 착용, 기침 예절을 준수합니다.' },
-        { phase: '증상 발생', act: '보건소 또는 1339 콜센터로 우선 전화 상담 후 지정 병원을 방문합니다.' }
-      ]
-    }
-  };
-
-  // Materials Data
-  const materials = [
-    { title: '1주차 강의록: 현대위험사회와 재난관리 총론.pdf', type: 'PDF', size: '4.2 MB', date: '2026.09.02', downloads: 124 },
-    { title: '국가 재난안전관리 기본계획(2025-2029) 참고자료.pdf', type: 'PDF', size: '18.5 MB', date: '2026.09.09', downloads: 98 },
-    { title: '3주차 풍수해 방재 도시계획 케이스 스터디 템플릿.docx', type: 'Word', size: '1.1 MB', date: '2026.09.16', downloads: 110 },
-    { title: '지진해일 예측 및 내진설계 특강 발표자료_교수용.pptx', type: 'PPT', size: '24.0 MB', date: '2026.09.23', downloads: 85 }
-  ];
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans pb-16 selection:bg-amber-500 selection:text-slate-950">
+    <div className="min-h-screen bg-[#FFFDF6] text-slate-800 font-sans selection:bg-pink-200 selection:text-pink-900 pb-20 relative overflow-hidden">
       
-      {/* 1. Header / Top Banner */}
-      <div className="bg-slate-950 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md bg-slate-950/80">
-        <div className="max-w-7xl mx-mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-tr from-amber-500 to-orange-600 rounded-xl shadow-lg shadow-amber-500/20">
-                <Shield className="w-6 h-6 text-slate-950 stroke-[2.5]" />
-              </div>
-              <div>
-                <span className="text-xs font-semibold text-amber-400 tracking-wider uppercase">2026-2학기 전공선택</span>
-                <h1 className="text-lg font-bold text-white leading-tight">재난안전개론 <span className="text-xs text-slate-400 font-normal hidden sm:inline">| DSM-302</span></h1>
-              </div>
-            </div>
+      {/* Floating Decorative Cute Bubbles */}
+      <div className="absolute top-6 left-10 text-3xl animate-bounce duration-1000 opacity-60 pointer-events-none">☁️</div>
+      <div className="absolute top-20 right-12 text-2xl animate-pulse opacity-70 pointer-events-none">✨</div>
+      <div className="absolute top-60 -left-4 text-4xl opacity-50 pointer-events-none">🌸</div>
+      <div className="absolute top-96 right-4 text-3xl animate-bounce opacity-60 pointer-events-none">🧸</div>
 
-            <div className="flex items-center space-x-4 text-xs sm:text-sm">
-              <div className="hidden md:flex items-center space-x-2 text-slate-300 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full">
-                <User className="w-4 h-4 text-amber-400" />
-                <span>담당: 김안전 교수 (안전공학연구소)</span>
-              </div>
-              <div className="relative">
-                <button className="p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition">
-                  <Bell className="w-5 h-5" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full animate-ping"></span>
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full"></span>
-                </button>
-              </div>
-            </div>
-          </div>
+      {/* Pop Toast Notification */}
+      {popToast && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 text-white font-black px-6 py-3 rounded-full shadow-lg border-2 border-white animate-bounce flex items-center space-x-2 text-sm">
+          <span>{popToast}</span>
+        </div>
+      )}
+
+      {/* Top Cute Mini Header Bar */}
+      <div className="bg-gradient-to-r from-pink-100 via-purple-100 to-sky-100 border-b-2 border-pink-200 text-xs py-2 px-4 text-pink-900 font-bold flex justify-between items-center">
+        <div className="flex items-center space-x-2">
+          <span className="animate-spin text-base">🌸</span>
+          <span>햇살초등학교 3학년 1반 • 사랑이 넘치는 교실</span>
+        </div>
+        <div className="hidden sm:flex items-center space-x-3 text-pink-700">
+          <span>2026년 10월 30일 금요일 ☀️</span>
+          <span>•</span>
+          <span>담임: 이소담 선생님 👩‍🏫</span>
         </div>
       </div>
 
-      {/* Alert Banner */}
-      <div className="bg-gradient-to-r from-amber-950/80 via-slate-900 to-amber-950/80 border-b border-amber-500/30 text-amber-200 text-xs sm:text-sm py-2 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-2 truncate">
-            <span className="px-2 py-0.5 bg-amber-500 text-slate-950 text-xs font-bold rounded">공지</span>
-            <span className="truncate">📢 [중요] 7주차 현장 전문가 초청 특강 장소 변경 (공학관 101호 → 종합강의동 302호)</span>
-          </div>
-          <span className="hidden lg:inline text-xs text-amber-400/80 shrink-0">마감 임박 과제 1건 있음</span>
-        </div>
-      </div>
-
-      {/* Hero Header Section */}
-      <div className="relative bg-slate-950 border-b border-slate-800 py-10 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-1/3 -mb-12 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div className="max-w-7xl mx-auto relative">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-            <div className="lg:col-span-2 space-y-4">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium">
-                <Activity className="w-3.5 h-3.5" />
-                <span>국가 안전자격 연계 인증 과목</span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-                체계적인 위기관리와 <br className="hidden sm:inline" />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-orange-400 to-amber-200">
-                  미래 사회의 안전 리더십
+      {/* Header Banner with Mascot */}
+      <header className="sticky top-0 z-40 bg-[#FFFDF6]/90 backdrop-blur-md border-b-4 border-pink-200 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+          
+          <div className="flex items-center space-x-3">
+            <div 
+              onClick={() => setMascotFeeling('신나서 춤추는 중! 🎵')}
+              className="w-13 h-13 bg-gradient-to-br from-amber-200 to-pink-200 border-3 border-pink-300 rounded-3xl flex items-center justify-center text-3xl shadow-sm cursor-pointer hover:scale-110 active:scale-95 transition-all transform -rotate-3"
+            >
+              🧸
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="bg-pink-100 text-pink-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-pink-200">
+                  햇살드림 3-1
                 </span>
+                <span className="text-xs text-purple-600 font-bold">마스코트 포근이 ({mascotFeeling})</span>
+              </div>
+              <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight flex items-center gap-1">
+                알록달록 햇살반 포털 <span className="text-pink-400">🎀</span>
+              </h1>
+            </div>
+          </div>
+
+          {/* Student Status Badge */}
+          <div className="flex items-center space-x-3">
+            <div className="hidden md:flex items-center space-x-2 bg-sky-50 border-2 border-sky-200 px-3 py-1.5 rounded-full text-xs font-bold text-sky-800">
+              <span>☀️ 오늘 날씨: 맑음 22°C</span>
+            </div>
+
+            <div className="bg-gradient-to-r from-amber-100 to-pink-100 border-2 border-pink-300 px-3.5 py-1.5 rounded-2xl flex items-center space-x-2 shadow-sm">
+              <span className="text-lg">⭐</span>
+              <div className="text-xs font-black text-pink-900">
+                칭찬 스티커 <span className="text-pink-600">{stickerCount}</span>/20개
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </header>
+
+      {/* Hero Welcome Banner Card */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-6">
+        <div className="bg-gradient-to-r from-pink-200 via-purple-100 to-sky-200 border-4 border-white rounded-[2.5rem] p-6 sm:p-8 shadow-md relative overflow-hidden">
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-3 text-center md:text-left">
+              <div className="inline-flex items-center space-x-2 bg-white/90 border-2 border-pink-200 px-3.5 py-1 rounded-full text-xs font-black text-pink-700 shadow-xs">
+                <span>✨ 오늘의 학급 약속</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-snug">
+                "친구에게 따뜻한 고운 말 쓰기, <br />
+                서로 도우며 같이 웃어요! 💖"
               </h2>
-              <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-2xl">
-                자연·사회재난의 발생 메커니즘을 이해하고, 현대 위험 사회에서의 예방, 대비, 대응, 복구 4단계 리스크 관리 역량을 배양하는 대학생 대상 핵심 교양/전공 필수 과정입니다.
+
+              <p className="text-xs sm:text-sm text-slate-700 font-bold max-w-lg">
+                오늘도 즐겁고 신나는 수업이 기다리고 있어요! 준비물과 알림장을 점검하고 칭찬 스티커도 모아보세요! 🎈
               </p>
-              
-              <div className="pt-2 flex flex-wrap gap-4 text-xs text-slate-300">
-                <div className="flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-3 py-2 rounded-lg">
-                  <Calendar className="w-4 h-4 text-amber-400" />
-                  <span>수요일 14:00 - 17:00 (3학점)</span>
-                </div>
-                <div className="flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-3 py-2 rounded-lg">
-                  <MapPin className="w-4 h-4 text-amber-400" />
-                  <span>종합강의동 302호 / Hybrid LMS</span>
-                </div>
-                <div className="flex items-center space-x-1.5 bg-slate-900 border border-slate-800 px-3 py-2 rounded-lg">
-                  <Clock className="w-4 h-4 text-amber-400" />
-                  <span>오피스 아워: 목 15:00 - 17:00</span>
-                </div>
-              </div>
             </div>
 
-            {/* Quick Stats Card */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative backdrop-blur">
-              <div className="text-xs text-slate-400 mb-4 flex justify-between items-center">
-                <span>나의 수강 진행률</span>
-                <span className="text-amber-400 font-bold">Week 6 / 15</span>
-              </div>
-              
-              <div className="w-full bg-slate-800 rounded-full h-2.5 mb-6">
-                <div className="bg-gradient-to-r from-amber-500 to-orange-500 h-2.5 rounded-full w-[40%]"></div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
-                  <div className="text-xs text-slate-400">출석현황</div>
-                  <div className="text-lg font-bold text-emerald-400 mt-1">100% <span className="text-xs font-normal text-slate-500">(6/6)</span></div>
-                </div>
-                <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
-                  <div className="text-xs text-slate-400">제출한 과제</div>
-                  <div className="text-lg font-bold text-amber-400 mt-1">2 <span className="text-xs font-normal text-slate-500">/ 3 건</span></div>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-slate-400">다음 수업: 10월 30일 (수)</span>
-                <span className="text-amber-400 hover:underline cursor-pointer">강의실 입장 →</span>
+            {/* Cute Interactive Character Card */}
+            <div className="bg-white/90 border-4 border-purple-200 rounded-3xl p-5 shadow-sm text-center space-y-2 transform rotate-1 hover:rotate-0 transition duration-300 shrink-0 w-full md:w-auto">
+              <div className="text-5xl animate-bounce">🐥</div>
+              <div className="text-xs font-black text-purple-800">오늘의 주인공</div>
+              <div className="text-sm font-black text-slate-800">12번 김기쁨 어린이 🌟</div>
+              <div className="text-[11px] bg-pink-100 text-pink-700 font-bold px-2 py-0.5 rounded-full">
+                발표왕 스티커 획득!
               </div>
             </div>
           </div>
+
         </div>
-      </div>
+      </section>
 
-      {/* Navigation Tabs */}
-      <div className="bg-slate-950/50 border-b border-slate-800 sticky top-16 z-30 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex space-x-2 sm:space-x-8 overflow-x-auto no-scrollbar">
-            {[
-              { id: 'overview', label: '강의 개요', icon: BookOpen },
-              { id: 'syllabus', label: '주차별 강의계획', icon: Calendar },
-              { id: 'protocols', label: '재난 행동요령 가이드', icon: AlertTriangle },
-              { id: 'materials', label: '강의자료 & 과제', icon: FileText },
-              { id: 'qna', label: '학생 Q&A 및 토론', icon: MessageSquare },
-            ].map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 py-4 px-3 border-b-2 font-medium text-sm whitespace-nowrap transition-all ${
-                    isActive
-                      ? 'border-amber-500 text-amber-400 bg-amber-500/5'
-                      : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-700'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-slate-500'}`} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
+      {/* Main Grid Section */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
 
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        {/* TAB 1: 강의 개요 (Course Overview) */}
-        {activeTab === 'overview' && (
-          <div className="space-y-8 animate-fadeIn">
-            
-            {/* Goals & Info */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2 bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 space-y-4">
-                <h3 className="text-xl font-bold text-white flex items-center space-x-2">
-                  <Info className="w-5 h-5 text-amber-400" />
-                  <span>강의 목표 (Course Learning Objectives)</span>
-                </h3>
-                <ul className="space-y-3 text-slate-300 text-sm leading-relaxed">
-                  <li className="flex items-start space-x-2">
-                    <span className="text-amber-400 font-bold">•</span>
-                    <span><strong>재난 학술 지식 체계화:</strong> 자연재해, 인적·사회적 재난의 발생 원인과 현대 위험사회의 복합적 특성을 학문적으로 분석합니다.</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-amber-400 font-bold">•</span>
-                    <span><strong>국가 위기관리 거버넌스 이해:</strong> 정부, 지자체, 시민사회 및 국제기구의 재난 대응 역할 분담과 현장지휘체계(ICS)를 다룹니다.</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-amber-400 font-bold">•</span>
-                    <span><strong>실무형 위험성 평가 능력:</strong> 특정 대학 캠퍼스 및 지역사회를 대상으로 위험요인을 발굴하고(HIRA) 대응 시나리오를 기획해 봅니다.</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Grading Policy Card */}
-              <div className="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg font-bold text-white flex items-center space-x-2 mb-4">
-                    <PieChart className="w-5 h-5 text-amber-400" />
-                    <span>성적 평가 비율 (Grading)</span>
-                  </h3>
-                  <div className="space-y-3 text-sm">
-                    {[
-                      { label: '중간고사 (Midterm)', pct: 30, color: 'bg-amber-500' },
-                      { label: '기말고사 (Final)', pct: 30, color: 'bg-orange-500' },
-                      { label: '팀 프로젝트 과제', pct: 20, color: 'bg-blue-500' },
-                      { label: '출석 (Attendance)', pct: 10, color: 'bg-emerald-500' },
-                      { label: '수업 참여도/Q&A', pct: 10, color: 'bg-purple-500' },
-                    ].map((item, idx) => (
-                      <div key={idx}>
-                        <div className="flex justify-between text-xs mb-1">
-                          <span className="text-slate-300">{item.label}</span>
-                          <span className="text-slate-400 font-semibold">{item.pct}%</span>
-                        </div>
-                        <div className="w-full bg-slate-900 rounded-full h-2">
-                          <div className={`${item.color} h-2 rounded-full`} style={{ width: `${item.pct}%` }}></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="mt-4 pt-3 border-t border-slate-700/50 text-xs text-slate-400 text-center">
-                  * 상대평가 기준 준수 (A비율 최대 30%)
-                </div>
-              </div>
-            </div>
-
-            {/* Professor & TA Contact Card */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 flex items-start space-x-4">
-                <div className="w-14 h-14 bg-slate-700 rounded-2xl flex items-center justify-center shrink-0 border border-slate-600">
-                  <User className="w-7 h-7 text-amber-400" />
+        {/* Section 1: Today's Notice Board (오늘의 알림장) + Checklist */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* Notice Board (7 cols) */}
+          <div className="lg:col-span-7 bg-white border-4 border-pink-200 rounded-[2rem] p-6 shadow-sm space-y-5">
+            <div className="flex items-center justify-between border-b-2 border-pink-100 pb-3">
+              <div className="flex items-center space-x-2">
+                <div className="p-2 bg-pink-100 text-pink-600 rounded-2xl text-xl">
+                  📢
                 </div>
                 <div>
-                  <h4 className="font-bold text-white text-base">담당교수: 김안전 박사</h4>
-                  <p className="text-xs text-slate-400 mt-0.5">안전공학과 / 국가재난안전연구소 연구위원</p>
-                  <p className="text-xs text-slate-300 mt-2">📧 email: disaster_kim@university.ac.kr</p>
-                  <p className="text-xs text-slate-300">🏢 연구실: 방재관 405호 (Tel: 02-1234-5678)</p>
+                  <h3 className="text-lg font-black text-slate-800">오늘의 알림장 📝</h3>
+                  <p className="text-xs text-slate-500 font-bold">선생님이 전하는 소중한 이야기</p>
                 </div>
               </div>
-
-              <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 flex items-start space-x-4">
-                <div className="w-14 h-14 bg-slate-700 rounded-2xl flex items-center justify-center shrink-0 border border-slate-600">
-                  <HelpCircle className="w-7 h-7 text-blue-400" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-white text-base">조교 정보 (TA)</h4>
-                  <p className="text-xs text-slate-400 mt-0.5">박안전 석사과정 (재난예방실험실)</p>
-                  <p className="text-xs text-slate-300 mt-2">📧 email: ta_safety@university.ac.kr</p>
-                  <p className="text-xs text-slate-300">💬 과제 제출 및 채점 관련 문의 담당</p>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        )}
-
-        {/* TAB 2: 주차별 강의 계획 (Syllabus & Modules) */}
-        {activeTab === 'syllabus' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-xl font-bold text-white">15주차 커리큘럼 계획</h3>
-                <p className="text-slate-400 text-xs">주차별 강의 주제 및 핵심 학습 내용을 확인하세요.</p>
-              </div>
-              <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">
-                현재 6주차 진행 중
+              <span className="text-xs font-black bg-pink-100 text-pink-700 px-3 py-1 rounded-full">
+                중요 공지 2건
               </span>
             </div>
 
-            <div className="space-y-3">
-              {syllabusData.map((item) => {
-                const isCurrent = item.week === 6;
-                const isPast = item.week < 6;
-                const isOpen = activeWeek === item.week;
+            {/* Pastel Sticky Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-amber-50 border-3 border-amber-200 rounded-2xl p-4 space-y-2 transform -rotate-1 hover:rotate-0 transition">
+                <div className="flex justify-between items-center text-xs font-black text-amber-800">
+                  <span>📌 가을 현장체험학습</span>
+                  <span className="bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full text-[10px]">D-4</span>
+                </div>
+                <p className="text-xs text-slate-700 font-bold leading-relaxed">
+                  다음 주 화요일 현장체험학습 가정통신문 확인 도장을 월요일까지 꼭 제출해 주세요! 🚌
+                </p>
+              </div>
 
-                return (
-                  <div 
-                    key={item.week}
-                    className={`border rounded-xl transition-all ${
-                      isCurrent 
-                        ? 'bg-slate-800/80 border-amber-500/60 shadow-lg shadow-amber-500/5' 
-                        : isPast 
-                          ? 'bg-slate-900/50 border-slate-800' 
-                          : 'bg-slate-900/30 border-slate-800/60 opacity-80'
+              <div className="bg-purple-50 border-3 border-purple-200 rounded-2xl p-4 space-y-2 transform rotate-1 hover:rotate-0 transition">
+                <div className="flex justify-between items-center text-xs font-black text-purple-800">
+                  <span>🎨 내일 미술 준비물</span>
+                  <span className="bg-purple-200 text-purple-900 px-2 py-0.5 rounded-full text-[10px]">준비물</span>
+                </div>
+                <p className="text-xs text-slate-700 font-bold leading-relaxed">
+                  수채화 물감, 붓, 물통을 가방에 예쁘게 챙겨와주세요. 🖌️
+                </p>
+              </div>
+            </div>
+
+            {/* Interactive Checklist (준비물 체크리스트) */}
+            <div className="bg-sky-50/70 border-3 border-sky-200 rounded-2xl p-4 space-y-3">
+              <div className="flex justify-between items-center">
+                <h4 className="text-xs font-black text-sky-900 flex items-center space-x-1">
+                  <span>✅ 내가 스스로 챙기는 준비물 체크!</span>
+                </h4>
+                <span className="text-xs font-black text-sky-700">
+                  {checklist.filter(c => c.done).length} / {checklist.length} 완료 ✨
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                {checklist.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => toggleCheck(item.id)}
+                    className={`p-3 rounded-xl border-2 flex items-center justify-between text-xs font-black cursor-pointer transition-all ${
+                      item.done 
+                        ? 'bg-emerald-100/80 border-emerald-300 text-emerald-800 line-through opacity-80' 
+                        : 'bg-white border-sky-200 text-slate-800 hover:border-pink-300'
                     }`}
                   >
-                    <div 
-                      onClick={() => setActiveWeek(isOpen ? null : item.week)}
-                      className="p-4 flex items-center justify-between cursor-pointer"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <span className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm ${
-                          isCurrent 
-                            ? 'bg-amber-500 text-slate-950' 
-                            : isPast 
-                              ? 'bg-slate-800 text-slate-400' 
-                              : 'bg-slate-800/50 text-slate-600'
-                        }`}>
-                          {item.week}W
-                        </span>
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                              {item.badge}
-                            </span>
-                            {isCurrent && (
-                              <span className="text-xs font-bold text-amber-400 animate-pulse">
-                                [이번 주 강의]
-                              </span>
-                            )}
-                          </div>
-                          <h4 className="text-base font-semibold text-white mt-1">{item.title}</h4>
-                        </div>
+                    <div className="flex items-center space-x-2">
+                      <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center text-white text-xs ${
+                        item.done ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-300'
+                      }`}>
+                        {item.done && '✓'}
                       </div>
-
-                      <button className="text-slate-400 hover:text-white p-1">
-                        {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                      </button>
+                      <span>{item.text}</span>
                     </div>
-
-                    {isOpen && (
-                      <div className="px-4 pb-4 pt-1 border-t border-slate-800/60 text-sm text-slate-300 space-y-3">
-                        <p className="bg-slate-950/40 p-3 rounded-lg text-xs leading-relaxed border border-slate-800">
-                          {item.desc}
-                        </p>
-                        <div className="flex items-center justify-between text-xs text-slate-400">
-                          <span>권장 읽기 자료: [교재 3장 및 정부재난보고서]</span>
-                          <button className="text-amber-400 hover:underline flex items-center space-x-1">
-                            <span>강의 노트 다운로드</span>
-                            <Download className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                    <span className="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded-md">
+                      {item.tag}
+                    </span>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* TAB 3: 주요 재난 유형별 핵심 가이드 (Interactive Safety Protocol Explorer) */}
-        {activeTab === 'protocols' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div>
-              <h3 className="text-xl font-bold text-white">주요 재난 유형별 핵심 가이드 (Safety Protocol)</h3>
-              <p className="text-slate-400 text-xs">대학생이 꼭 숙지해야 할 재난 상황별 단계적 행동수칙 가이드입니다.</p>
-            </div>
-
-            {/* Protocol Selector Tabs */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                { id: 'earthquake', label: '지진 (Earthquake)', icon: Activity },
-                { id: 'fire', label: '화재 (Fire Safety)', icon: Flame },
-                { id: 'typhoon', label: '태풍/호우 (Flood)', icon: CloudRain },
-                { id: 'epidemic', label: '감염병/화학 (Hazmat)', icon: HeartPulse },
-              ].map((btn) => {
-                const Icon = btn.icon;
-                const isSelected = selectedDisaster === btn.id;
-                return (
-                  <button
-                    key={btn.id}
-                    onClick={() => setSelectedDisaster(btn.id)}
-                    className={`p-4 rounded-xl border flex flex-col items-center space-y-2 text-center transition-all ${
-                      isSelected 
-                        ? 'bg-slate-800 border-amber-500 shadow-lg shadow-amber-500/10 text-white' 
-                        : 'bg-slate-900/50 border-slate-800 text-slate-400 hover:bg-slate-800/40'
-                    }`}
-                  >
-                    <Icon className={`w-6 h-6 ${isSelected ? 'text-amber-400' : 'text-slate-500'}`} />
-                    <span className="text-xs font-semibold">{btn.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Selected Protocol Details */}
-            {disasterProtocols[selectedDisaster] && (
-              <div className={`bg-gradient-to-br ${disasterProtocols[selectedDisaster].bgClass} border rounded-2xl p-6 space-y-6`}>
-                <div className="flex items-center space-x-4">
-                  <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800">
-                    {disasterProtocols[selectedDisaster].icon}
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-white">{disasterProtocols[selectedDisaster].title}</h4>
-                    <p className="text-xs text-slate-400">{disasterProtocols[selectedDisaster].subtitle}</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {disasterProtocols[selectedDisaster].steps.map((step, idx) => (
-                    <div key={idx} className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-amber-400">STEP 0{idx + 1}</span>
-                        <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300">{step.phase}</span>
-                      </div>
-                      <p className="text-sm text-slate-200 leading-snug">{step.act}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="bg-slate-950/60 rounded-xl p-4 border border-slate-800/80 flex items-center justify-between text-xs">
-                  <div className="flex items-center space-x-2 text-slate-300">
-                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>대학 교내 긴급 비상 연락망: 중앙관제실 02-1234-0119 / 119 안전신고센터</span>
-                  </div>
-                  <button className="text-amber-400 hover:underline flex items-center space-x-1 shrink-0">
-                    <span>PDF 가이드 다운</span>
-                    <Download className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* TAB 4: 강의 자료 & 과제 (Materials & Assignments) */}
-        {activeTab === 'materials' && (
-          <div className="space-y-8 animate-fadeIn">
-            
-            {/* Assignments Tracker */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-white flex items-center space-x-2">
-                <FileText className="w-5 h-5 text-amber-400" />
-                <span>과제 제출 현황 (Assignments & Deadlines)</span>
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* Assignment Item 1 */}
-                <div className="bg-slate-800/40 border border-amber-500/40 rounded-2xl p-5 space-y-3 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-extrabold px-3 py-1 rounded-bl-lg">
-                    마감 3일 전
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 text-xs rounded border border-amber-500/30">진행 중</span>
-                    <span className="text-xs text-slate-400">개인 과제</span>
-                  </div>
-                  <h4 className="text-base font-bold text-white">3주차: 풍수해 예방 도시 방재 사례 분석 보고서</h4>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    자신의 거주지 또는 대학 인근 지역의 최근 5년간 풍수해 피해 사례를 조사하고 방재 개선안을 A4 3매 이내 작성.
-                  </p>
-                  <div className="pt-2 border-t border-slate-700/60 flex items-center justify-between text-xs">
-                    <span className="text-slate-400">마감일: 2026.11.02 (일) 23:59까지</span>
-                    <button className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1.5 rounded-lg transition">
-                      과제 제출하기
-                    </button>
-                  </div>
-                </div>
-
-                {/* Assignment Item 2 */}
-                <div className="bg-slate-800/20 border border-slate-800 rounded-2xl p-5 space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <span className="px-2 py-0.5 bg-slate-700 text-slate-300 text-xs rounded">마감 예정</span>
-                    <span className="text-xs text-slate-400">팀 프로젝트</span>
-                  </div>
-                  <h4 className="text-base font-bold text-slate-200">14주차: 캠퍼스 위험성 평가(HIRA) 보고서 및 발표</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    4인 1조로 대학 내 주요 시설(기숙사, 도서관, 실험동) 중 1곳을 선정하여 픽토그램 위험지도 작성 및 평가.
-                  </p>
-                  <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
-                    <span className="text-slate-500">마감일: 2026.12.02 (수) 수업 시간</span>
-                    <span className="text-slate-500 italic">팀 구성 완료</span>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-            {/* Lecture Downloads List */}
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <h3 className="text-xl font-bold text-white">강의 자료실 (Course Materials)</h3>
-                <div className="relative">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                  <input 
-                    type="text" 
-                    placeholder="자료명 검색..." 
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="bg-slate-900 border border-slate-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 w-full sm:w-64"
-                  />
-                </div>
-              </div>
-
-              <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden divide-y divide-slate-800">
-                {materials
-                  .filter(m => m.title.toLowerCase().includes(searchQuery.toLowerCase()))
-                  .map((item, idx) => (
-                    <div key={idx} className="p-4 flex items-center justify-between hover:bg-slate-800/30 transition">
-                      <div className="flex items-center space-x-3">
-                        <div className="px-2.5 py-1 bg-slate-800 border border-slate-700 rounded text-xs font-bold text-amber-400">
-                          {item.type}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-slate-200">{item.title}</p>
-                          <div className="flex items-center space-x-3 text-xs text-slate-500 mt-0.5">
-                            <span>{item.size}</span>
-                            <span>•</span>
-                            <span>등록일: {item.date}</span>
-                            <span>•</span>
-                            <span>다운로드: {item.downloads}회</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <button className="p-2 text-slate-400 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition">
-                        <Download className="w-4 h-4" />
-                      </button>
-                    </div>
                 ))}
               </div>
             </div>
 
           </div>
-        )}
 
-        {/* TAB 5: 학생 소통 & Q&A (Discussion & Q&A) */}
-        {activeTab === 'qna' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-xl font-bold text-white">학생 Q&A 및 강의 토론 게시판</h3>
-                <p className="text-slate-400 text-xs">수업 내용, 과제, 재난 이슈에 대해 자유롭게 질문하고 소통하세요.</p>
+          {/* Timetable & Lunch Card (5 cols) */}
+          <div className="lg:col-span-5 bg-white border-4 border-purple-200 rounded-[2rem] p-6 shadow-sm space-y-5">
+            
+            <div className="flex items-center justify-between border-b-2 border-purple-100 pb-3">
+              <div className="flex items-center space-x-2">
+                <div className="p-2 bg-purple-100 text-purple-600 rounded-2xl text-xl">
+                  ⏰
+                </div>
+                <h3 className="text-lg font-black text-slate-800">시간표 & 맛있는 급식</h3>
               </div>
-              <button 
-                onClick={() => setIsModalOpen(true)}
-                className="flex items-center space-x-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition shadow-lg shadow-amber-500/10"
-              >
-                <Plus className="w-4 h-4" />
-                <span>새 질문 등록</span>
-              </button>
+              
+              <div className="flex space-x-1 bg-purple-50 p-1 rounded-xl border border-purple-200 text-xs font-black">
+                <button 
+                  onClick={() => setActiveTab('timetable')}
+                  className={`px-3 py-1 rounded-lg transition ${
+                    activeTab === 'timetable' ? 'bg-purple-400 text-white shadow-xs' : 'text-purple-700'
+                  }`}
+                >
+                  시간표
+                </button>
+                <button 
+                  onClick={() => setActiveTab('lunch')}
+                  className={`px-3 py-1 rounded-lg transition ${
+                    activeTab === 'lunch' ? 'bg-purple-400 text-white shadow-xs' : 'text-purple-700'
+                  }`}
+                >
+                  급식 🍱
+                </button>
+              </div>
             </div>
 
-            {/* Q&A List */}
-            <div className="space-y-4">
-              {questions.map((q) => (
-                <div key={q.id} className="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-5 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <span className={`px-2 py-0.5 text-xs rounded border ${
-                        q.answered 
-                          ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
-                          : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-                      }`}>
-                        {q.answered ? '답변완료' : '답변대기'}
+            {/* TAB: Timetable */}
+            {activeTab === 'timetable' && (
+              <div className="space-y-2.5">
+                {[
+                  { period: '1교시', time: '09:00', icon: '📖', subject: '국어', desc: '시 읽고 감상 나누기', bg: 'bg-red-50 border-red-200 text-red-800' },
+                  { period: '2교시', time: '09:50', icon: '📐', subject: '수학', desc: '분수 개념 알아보기', bg: 'bg-blue-50 border-blue-200 text-blue-800' },
+                  { period: '3교시', time: '10:40', icon: '🏃', subject: '체육', desc: '강당에서 신나는 피구', bg: 'bg-emerald-50 border-emerald-200 text-emerald-800' },
+                  { period: '4교시', time: '11:30', icon: '🧪', subject: '과학', desc: '식물의 잎과 줄기 관찰', bg: 'bg-amber-50 border-amber-200 text-amber-800' },
+                  { period: '5교시', time: '13:00', icon: '🎨', subject: '미술', desc: '가을 풍경화 완성하기', bg: 'bg-pink-50 border-pink-200 text-pink-800' },
+                ].map((t, idx) => (
+                  <div key={idx} className={`p-3 rounded-2xl border-2 ${t.bg} flex items-center justify-between shadow-xs`}>
+                    <div className="flex items-center space-x-3">
+                      <span className="text-xl">{t.icon}</span>
+                      <div>
+                        <div className="text-xs font-black">{t.period} • {t.subject}</div>
+                        <div className="text-[11px] opacity-80 font-bold">{t.desc}</div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-black opacity-70 bg-white/80 px-2 py-0.5 rounded-md">
+                      {t.time}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* TAB: Yum-Yum Lunch Menu */}
+            {activeTab === 'lunch' && (
+              <div className="space-y-3">
+                <div className="bg-amber-100/70 border-2 border-amber-300 p-3 rounded-2xl text-center">
+                  <span className="text-xs font-black text-amber-900">오늘의 최애 메뉴 👑</span>
+                  <div className="text-base font-black text-amber-800 mt-0.5">🍗 달콤 수제 닭강정 & 샤인머스캣 🍇</div>
+                </div>
+
+                <div className="space-y-2">
+                  {[
+                    { name: '발아현미밥 🍚', type: '주식' },
+                    { name: '소고기 탕국 🥣', type: '국' },
+                    { name: '수제 닭강정 🍗', type: '인기 반찬', fav: true },
+                    { name: '새콤달콤 야채무침 🥗', type: '나물' },
+                    { name: '유기농 샤인머스캣 🍇', type: '후식', fav: true },
+                  ].map((m, idx) => (
+                    <div key={idx} className={`p-3 rounded-xl border-2 flex items-center justify-between text-xs font-black ${
+                      m.fav ? 'bg-pink-50 border-pink-300 text-pink-800' : 'bg-slate-50 border-slate-200 text-slate-700'
+                    }`}>
+                      <span>{m.name}</span>
+                      <span className="text-[10px] bg-white px-2 py-0.5 rounded-full border border-current">
+                        {m.type}
                       </span>
-                      <span className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">{q.category}</span>
                     </div>
-                    <span className="text-xs text-slate-500">{q.date}</span>
-                  </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-                  <div>
-                    <h4 className="text-base font-bold text-white">{q.title}</h4>
-                    <p className="text-xs text-slate-400 mt-1">{q.author}</p>
-                  </div>
+          </div>
 
-                  <p className="text-sm text-slate-300 bg-slate-950/40 p-3 rounded-xl border border-slate-800/80">
-                    {q.content}
-                  </p>
+        </div>
 
-                  {/* Professor Answer Section */}
-                  {q.answered && q.answer && (
-                    <div className="bg-amber-500/5 border border-amber-500/20 p-3 rounded-xl text-xs text-amber-200/90 flex items-start space-x-2">
-                      <CheckCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                      <div>{q.answer}</div>
-                    </div>
-                  )}
+        {/* Section 2: Praise Sticker Collector (칭찬 스티커판 ⭐) */}
+        <section className="bg-gradient-to-br from-pink-100 via-purple-100 to-sky-100 border-4 border-white rounded-[2.5rem] p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center space-x-1.5 bg-white px-3 py-1 rounded-full border-2 border-pink-300 text-xs font-black text-pink-700 mb-2">
+                <span>🏆 스스로 상주기 보드</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800">
+                칭찬 스티커 모으기판 🎈 ({stickerCount} / 20개)
+              </h3>
+              <p className="text-xs font-bold text-slate-600 mt-1">
+                버튼을 눌러 칭찬 스티커를 모으고 20개를 달성하면 특별한 칭찬 선물을 받아요!
+              </p>
+            </div>
 
-                  <div className="flex items-center justify-between pt-1 text-xs text-slate-400">
-                    <button 
-                      onClick={() => handleLike(q.id)}
-                      className="flex items-center space-x-1 hover:text-amber-400 transition"
-                    >
-                      <ThumbsUp className="w-3.5 h-3.5" />
-                      <span>추천 {q.likes}</span>
-                    </button>
-                    <span className="text-slate-500">댓글 {q.replies}개</span>
-                  </div>
+            <div className="bg-white border-3 border-purple-200 p-3.5 rounded-2xl flex items-center space-x-3 shadow-xs">
+              <span className="text-3xl animate-bounce">🎁</span>
+              <div>
+                <div className="text-[11px] font-bold text-slate-500">20개 완판 시 선물</div>
+                <div className="text-xs font-black text-purple-800">귀여운 학용품 세트 증정!</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Interactive Sticker Action Buttons */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { emoji: '🐻', label: '발표 최고', desc: '손들고 시선 맞추기' },
+              { emoji: '🐰', label: '친절 모범생', desc: '친구에게 따뜻한 말하기' },
+              { emoji: '⭐', label: '정리정돈 달인', desc: '내 책상 깨끗이 하기' },
+              { emoji: '🐱', label: '독서왕', desc: '책 20분 동안 읽기' },
+            ].map((btn, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleAddSticker(btn.emoji, btn.label)}
+                className="bg-white border-3 border-pink-200 hover:border-pink-400 p-4 rounded-2xl text-center space-y-2 shadow-xs hover:scale-105 active:scale-95 transition cursor-pointer group"
+              >
+                <div className="text-4xl group-hover:scale-125 transition duration-200">{btn.emoji}</div>
+                <div className="text-xs font-black text-slate-800">{btn.label}</div>
+                <div className="text-[10px] bg-pink-100 text-pink-700 font-extrabold py-0.5 rounded-full">
+                  +1 스티커 받기
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Collected Sticker Board Display */}
+          <div className="bg-white/80 border-3 border-pink-200 rounded-2xl p-4 space-y-2">
+            <div className="text-xs font-black text-slate-700 flex justify-between">
+              <span>내 스티커 모음판</span>
+              <span className="text-pink-600">총 {collectedStickers.length}개 수집 중</span>
+            </div>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {collectedStickers.map((s) => (
+                <div key={s.id} className={`px-3 py-1.5 rounded-xl border-2 ${s.color} text-xs font-black flex items-center space-x-1 shadow-xs`}>
+                  <span>{s.emoji}</span>
+                  <span>{s.name}</span>
                 </div>
               ))}
             </div>
           </div>
-        )}
+        </section>
+
+        {/* Section 3: Interactive Class Mailbox (소통 우체통 💌) */}
+        <section className="bg-white border-4 border-sky-200 rounded-[2rem] p-6 shadow-sm space-y-5">
+          <div className="flex items-center justify-between border-b-2 border-sky-100 pb-3">
+            <div className="flex items-center space-x-2">
+              <div className="p-2 bg-sky-100 text-sky-600 rounded-2xl text-xl">
+                💌
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-slate-800">도란도란 우리반 우체통</h3>
+                <p className="text-xs text-slate-500 font-bold">선생님과 친구들에게 예쁜 말을 나누어요.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Send Form */}
+          <form onSubmit={handleSendMail} className="flex gap-2">
+            <input 
+              type="text"
+              placeholder="예쁜 언어로 마음을 적어주세요 (예: 오늘도 수고했어!)..."
+              value={inputMsg}
+              onChange={(e) => setInputMsg(e.target.value)}
+              className="flex-1 bg-sky-50 border-2 border-sky-200 rounded-2xl px-4 py-3 text-xs text-slate-800 font-bold placeholder-slate-400 focus:outline-none focus:border-pink-300"
+            />
+            <button 
+              type="submit"
+              className="bg-pink-400 hover:bg-pink-500 active:scale-95 text-white font-black px-6 py-3 rounded-2xl text-xs flex items-center space-x-1 shadow transition cursor-pointer shrink-0"
+            >
+              <span>편지 보내기</span>
+              <Send className="w-3.5 h-3.5" />
+            </button>
+          </form>
+
+          {/* Messages Stream */}
+          <div className="space-y-3 pt-2">
+            {mailbox.map((m) => (
+              <div key={m.id} className="p-4 bg-sky-50/60 border-2 border-sky-100 rounded-2xl space-y-1">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-black text-slate-800">{m.sender}</span>
+                    <span className="text-[10px] bg-pink-100 text-pink-700 font-bold px-2 py-0.5 rounded-full">
+                      {m.badge}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-bold">{m.time}</span>
+                </div>
+                <p className="text-xs text-slate-700 font-bold leading-relaxed">{m.msg}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
       </main>
 
-      {/* New Question Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
-            <h3 className="text-lg font-bold text-white">질문 작성하기</h3>
-            
-            <form onSubmit={handleAddQuestion} className="space-y-4">
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">카테고리</label>
-                <select 
-                  value={newQuestionCategory} 
-                  onChange={(e) => setNewQuestionCategory(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-amber-500"
-                >
-                  <option value="강의질문">강의질문</option>
-                  <option value="과제문의">과제문의</option>
-                  <option value="시험문의">시험문의</option>
-                  <option value="기타">기타</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">제목</label>
-                <input 
-                  type="text" 
-                  placeholder="질문 제목을 입력하세요..."
-                  value={newQuestionTitle}
-                  onChange={(e) => setNewQuestionTitle(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">내용</label>
-                <textarea 
-                  rows={4}
-                  placeholder="구체적인 질문 내용을 입력해 주세요..."
-                  value={newQuestionContent}
-                  onChange={(e) => setNewQuestionContent(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div className="flex justify-end space-x-2 pt-2">
-                <button 
-                  type="button" 
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg transition"
-                >
-                  취소
-                </button>
-                <button 
-                  type="submit" 
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-lg transition"
-                >
-                  질문 등록
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Footer */}
-      <footer className="mt-12 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 한국대학교 공과대학 방재안전공학과 / 재난안전개론 강의포털</p>
-        <p className="mt-1 text-slate-600">본 시스템은 비상대응 행동요령 교육용 인터랙티브 LMS 모듈입니다.</p>
+      {/* Cute Footer */}
+      <footer className="max-w-6xl mx-auto px-4 text-center text-xs font-bold text-slate-400 space-y-1">
+        <p>🌸 햇살초등학교 3학년 1반 학급 홈페이지 • 사랑이 가득한 교실 🎈</p>
+        <p className="text-[10px] text-slate-300">Copyright © 2026 Sunshine Elementary Class 3-1</p>
       </footer>
 
     </div>
